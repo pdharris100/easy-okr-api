@@ -21,8 +21,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class ObjectiveDeserializer extends StdDeserializer<Objective> {
 
 	public ObjectiveDeserializer() {
-        this(null);
-    }	
+		this(null);
+	}
 
 	protected ObjectiveDeserializer(Class<?> vc) {
 		super(vc);
@@ -35,21 +35,30 @@ public class ObjectiveDeserializer extends StdDeserializer<Objective> {
 		ObjectMapper mapper = (ObjectMapper) parser.getCodec();
 		ObjectNode node = parser.getCodec().readTree(parser);
 		ObjectNode domainNode = (ObjectNode) node.get("domain");
-		Domain domain = mapper.treeToValue(domainNode, Domain.class);
+		Domain domain = null;
+		if (domainNode != null) {
+			domain = mapper.treeToValue(domainNode, Domain.class);
+		}
 		IntNode idNode = (IntNode) node.get("id");
 		long id = 0;
 		if (idNode != null) {
 			id = (Integer) idNode.numberValue();
 		}
-        String description = node.get("description").asText();
-        Objective objective = new Objective(id, domain, description);
-        ArrayNode keyResultsNode = (ArrayNode) node.get("keyResults");
-		Iterator<JsonNode> iter = keyResultsNode.iterator();
-		while (iter.hasNext()) {
-			ObjectNode objNode = (ObjectNode)iter.next();
-			KeyResult keyResult = mapper.treeToValue(objNode, KeyResult.class);
-			keyResult.setObjective(objective);
-			objective.addKeyResult(keyResult);
+		JsonNode descriptionNode = node.get("description");
+		String description = null;
+		if (descriptionNode != null) {
+			description = descriptionNode.asText();
+		}				
+		Objective objective = new Objective(id, domain, description);
+		ArrayNode keyResultsNode = (ArrayNode) node.get("keyResults");
+		if (keyResultsNode != null) {
+			Iterator<JsonNode> iter = keyResultsNode.iterator();
+			while (iter.hasNext()) {
+				ObjectNode objNode = (ObjectNode) iter.next();
+				KeyResult keyResult = mapper.treeToValue(objNode, KeyResult.class);
+				keyResult.setObjective(objective);
+				objective.addKeyResult(keyResult);
+			}
 		}
 		return objective;
 	}

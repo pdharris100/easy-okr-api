@@ -37,7 +37,7 @@ public class ObjectivesController {
 	}
 
 	@GetMapping()
-	public Iterable<Objective> readByDomainId(@RequestParam(value = "domainId") Long domainId) {
+	public Iterable<Objective> readByDomainId(@RequestParam(value = "domainId", defaultValue = "") Long domainId) {
 		Iterable<Objective> objectives;
 		if (domainId == null) {
 			objectives = this.objectiveRepository.findAll();
