@@ -1,0 +1,26 @@
+# This is a sample build configuration for Java (Maven).
+# Check our guides at https://confluence.atlassian.com/x/zd-5Mw for more examples.
+# Only use spaces to indent your .yml configuration.
+# -----
+# You can specify a custom docker image from Docker Hub as your build environment.
+image: maven:3.6.1
+
+pipelines:
+  default:
+    - step:
+        caches:
+          - maven
+        name: Deploy to test
+        deployment: production
+        script:
+            - pipe: microsoft/azure-web-apps-deploy:1.0.2
+              variables:
+                AZURE_APP_ID: $AZURE_APP_ID
+                AZURE_PASSWORD: $AZURE_PASSWORD
+                AZURE_TENANT_ID: $AZURE_TENANT_ID
+                AZURE_RESOURCE_GROUP: 'easy-okr'
+                AZURE_APP_NAME: 'easy-okr'
+                ZIP_FILE: '.target/easy-okr-service-0.0.1-SNAPSHOT.jar'
+                # SLOT: '<string>' # Optional.
+                # DEBUG: '<boolean>' # Optional.
+
