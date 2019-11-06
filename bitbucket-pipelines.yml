@@ -13,6 +13,7 @@ pipelines:
         name: Deploy to test
         deployment: production
         script:
+            - mvn -B verify
             - pipe: microsoft/azure-web-apps-deploy:1.0.2
               variables:
                 AZURE_APP_ID: $AZURE_APP_ID
