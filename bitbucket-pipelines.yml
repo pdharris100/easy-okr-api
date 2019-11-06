@@ -13,7 +13,7 @@ pipelines:
         name: Deploy to test
         deployment: production
         script:
-            - mvn -B verify
+            - mvn -B verify -DskipTests
             - pipe: microsoft/azure-web-apps-deploy:1.0.2
               variables:
                 AZURE_APP_ID: $AZURE_APP_ID
@@ -21,7 +21,7 @@ pipelines:
                 AZURE_TENANT_ID: $AZURE_TENANT_ID
                 AZURE_RESOURCE_GROUP: 'easy-okr'
                 AZURE_APP_NAME: 'easyokr'
-                ZIP_FILE: '.target/easy-okr-service-0.0.1-SNAPSHOT.jar'
+                ZIP_FILE: '/target/easy-okr-service-0.0.1-SNAPSHOT.jar'
                 # SLOT: '<string>' # Optional.
                 # DEBUG: '<boolean>' # Optional.
 
