@@ -19,7 +19,7 @@ pipelines:
                 AZURE_PASSWORD: $AZURE_PASSWORD
                 AZURE_TENANT_ID: $AZURE_TENANT_ID
                 AZURE_RESOURCE_GROUP: 'easy-okr'
-                AZURE_APP_NAME: 'easy-okr'
+                AZURE_APP_NAME: 'easyokr'
                 ZIP_FILE: '.target/easy-okr-service-0.0.1-SNAPSHOT.jar'
                 # SLOT: '<string>' # Optional.
                 # DEBUG: '<boolean>' # Optional.
