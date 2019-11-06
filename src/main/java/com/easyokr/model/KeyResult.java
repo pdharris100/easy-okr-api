@@ -1,5 +1,7 @@
 package com.easyokr.model;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,6 +25,8 @@ public class KeyResult {
 	private long baseline;
 	private long target;
 	private long current;
+	private Date start;
+	private Date deadline;
 	
 	protected KeyResult () {}
 	
