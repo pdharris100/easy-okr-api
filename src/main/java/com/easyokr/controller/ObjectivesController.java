@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,7 +42,7 @@ public class ObjectivesController {
 	public Iterable<Objective> readByDomainId(@RequestParam(value = "domainId", defaultValue = "") Long domainId) {
 		Iterable<Objective> objectives;
 		if (domainId == null) {
-			objectives = this.objectiveRepository.findAll();
+			objectives = this.objectiveRepository.findAll(Sort.by("description").ascending());
 		} else {
 			objectives = this.objectiveRepository.findByDomainId(domainId);
 		}
