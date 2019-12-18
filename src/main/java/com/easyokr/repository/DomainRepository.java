@@ -1,9 +1,9 @@
 package com.easyokr.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import com.easyokr.model.Domain;
 
-public interface DomainRepository extends CrudRepository<Domain, Long>{}
+public interface DomainRepository extends PagingAndSortingRepository<Domain, Long>{}
 
 
