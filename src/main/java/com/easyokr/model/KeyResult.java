@@ -16,7 +16,10 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 public class KeyResult {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	private long id;	
+	private long id;
+	@ManyToOne
+    @JoinColumn(name="org_id")
+	private Organisation org;
 	@ManyToOne
     @JoinColumn(name="obj_id")
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

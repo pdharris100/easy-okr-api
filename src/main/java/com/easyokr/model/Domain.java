@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -14,6 +16,9 @@ public class Domain {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private long id;
+	@ManyToOne
+    @JoinColumn(name="org_id")
+	private Organisation org;
 	private String name;
 //	@OneToMany(mappedBy = "domain",
 //			cascade = CascadeType.ALL,

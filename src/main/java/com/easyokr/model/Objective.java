@@ -20,7 +20,10 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 public class Objective {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	private long id;	
+	private long id;
+	@ManyToOne
+    @JoinColumn(name="org_id")
+	private Organisation org; 
 	private String description;	
 	@ManyToOne
     @JoinColumn(name="domain_id")
