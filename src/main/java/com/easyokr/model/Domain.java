@@ -29,5 +29,9 @@ public class Domain {
 
 	public void setId(long id) {
 		this.id = id;		
+	}
+
+	public boolean isPartOf(Organisation organisation) {		
+		return organisation.equals(this.org);
 	};
 }
