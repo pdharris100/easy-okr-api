@@ -13,6 +13,10 @@ public class Organisation {
 	private String name;
 	
 	protected Organisation () {}
+	
+	public Organisation (long id) {
+		this.id = id;
+	};
 
 	public void setId(long id) {
 		this.id = id;		
