@@ -8,6 +8,7 @@ import java.util.List;
 import com.easyokr.model.Domain;
 import com.easyokr.model.KeyResult;
 import com.easyokr.model.Objective;
+import com.easyokr.model.Organisation;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -39,6 +40,11 @@ public class ObjectiveDeserializer extends StdDeserializer<Objective> {
 		if (domainNode != null) {
 			domain = mapper.treeToValue(domainNode, Domain.class);
 		}
+		ObjectNode orgNode = (ObjectNode) node.get("org");
+		Organisation org = null;
+		if (orgNode != null) {
+			org = mapper.treeToValue(orgNode, Organisation.class);
+		}
 		IntNode idNode = (IntNode) node.get("id");
 		long id = 0;
 		if (idNode != null) {
@@ -49,7 +55,7 @@ public class ObjectiveDeserializer extends StdDeserializer<Objective> {
 		if (descriptionNode != null) {
 			description = descriptionNode.asText();
 		}				
-		Objective objective = new Objective(id, domain, description);
+		Objective objective = new Objective(id, org, domain, description);
 		ArrayNode keyResultsNode = (ArrayNode) node.get("keyResults");
 		if (keyResultsNode != null) {
 			Iterator<JsonNode> iter = keyResultsNode.iterator();

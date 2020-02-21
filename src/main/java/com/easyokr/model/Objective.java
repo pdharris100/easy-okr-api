@@ -35,8 +35,9 @@ public class Objective {
 	
 	protected Objective () {};
 	
-	public Objective (long id, Domain domain, String description) {
+	public Objective (long id, Organisation org, Domain domain, String description) {
 		this.id = id;
+		this.org = org;
 		this.domain = domain;
 		this.description = description; 
 	}
