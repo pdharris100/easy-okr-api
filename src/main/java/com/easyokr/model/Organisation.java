@@ -8,17 +8,38 @@ import javax.persistence.Id;
 @Entity
 public class Organisation {
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	private String name;
-	
-	protected Organisation () {}
-	
-	public Organisation (long id) {
+
+	protected Organisation() {
+	}
+
+	public Organisation(long id) {
 		this.id = id;
 	};
 
 	public void setId(long id) {
-		this.id = id;		
+		this.id = id;
 	};
+
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+
+		if (obj instanceof Organisation) {
+			Organisation org = (Organisation) obj;
+			if (org.name == null) {
+				return false;
+			}
+			if ((org.id == this.id) && (org.name.equals(this.name))) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

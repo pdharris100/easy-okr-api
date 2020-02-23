@@ -14,7 +14,7 @@ public interface DomainRepository extends PagingAndSortingRepository<Domain, Lon
 
 	Optional<Domain> findByIdAndOrg(long id, Organisation organisation);
 
-	boolean existsByIdAndOrg(long id, Organisation createOrg);
+	boolean existsByIdAndOrg(long id, Organisation organisation);
 	
 }
 

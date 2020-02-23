@@ -1,11 +1,25 @@
 package com.easyokr.interceptor;
 
+import java.util.Optional;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import com.easyokr.model.Organisation;
+import com.easyokr.repository.OrganisationRepository;
+
 public class MultiTenancyInterceptor extends HandlerInterceptorAdapter {
+	
+	public MultiTenancyInterceptor(OrganisationRepository orgRepository) {
+		this.orgRepository = orgRepository;
+	}
+	
+	private OrganisationRepository orgRepository;
 	
 	@Override
 	public boolean preHandle(
@@ -14,8 +28,13 @@ public class MultiTenancyInterceptor extends HandlerInterceptorAdapter {
 	  Object handler) throws Exception {
 		JwtAuthenticationToken jat = (JwtAuthenticationToken) request.getUserPrincipal();
 		Long orgId = (Long)jat.getToken().getClaim("https://easy-okr.web.app/organisation");
-		request.setAttribute("tenantId", orgId);
-	    return true;
+		Optional<Organisation> opt = orgRepository.findById(orgId);
+		if (opt.isPresent()) {
+			request.setAttribute("org", opt.get());
+			return true;
+		}
+	    return false;
 	}
 
 }
+

@@ -38,52 +38,52 @@ public class DomainsController {
 	private OrganisationRepository orgRepository;
 
 	@PostMapping
-	public Domain create(@RequestBody Domain domain) {
-		domainRepository.save(domain);
+	public Domain create(HttpServletRequest request, @RequestBody Domain domain) {
+		Organisation org = extractOrg(request);
+		if (domain.isPartOf(org)) {
+			domainRepository.save(domain);
+		};
 		return domain;
 	}
 
 	@GetMapping()
 	public Iterable<Domain> read(HttpServletRequest request) {
-		Organisation org = createOrg(request);
+		Organisation org = extractOrg(request);
 		Iterable<Domain> domains = this.domainRepository.findByOrg(org, Sort.by("name").ascending());
 		return domains;
 	}
 
 	@GetMapping("/{id}")
-	public Domain read(HttpServletRequest request, @PathVariable long id) throws DomainNotFoundException {
-		Organisation org = createOrg(request);
+	public Domain read(HttpServletRequest request, @PathVariable long id) {
+		Organisation org = extractOrg(request);
 		Optional<Domain> opt = this.domainRepository.findByIdAndOrg(id, org);
-		if (opt.isPresent())
+		if (opt.isPresent()) {
 			return opt.get();
-		throw new DomainNotFoundException("Domain id: " + id);
+		};
+		return null;
 	}
 
 	@PutMapping("/{id}")
-	public Domain update(@PathVariable long id, @RequestBody Domain domain) throws DomainNotFoundException {
-		if (!this.domainRepository.existsById(id)) throw new DomainNotFoundException("Domain id: " + id);
-		domain.setId(id);
-		domainRepository.save(domain);
+	public Domain update(HttpServletRequest request, @PathVariable long id, @RequestBody Domain domain) {
+		Organisation org = extractOrg(request);
+		if (domain.isPartOf(org) && this.domainRepository.existsById(id)) {
+			domain.setId(id);
+			domainRepository.save(domain);
+		};			
 		return domain;
 	}
 
 	@DeleteMapping("/{id}")
-	public void delete(@PathVariable long id) {
-		domainRepository.deleteById(id);
+	public void delete(HttpServletRequest request, @PathVariable long id) {
+		Organisation org = extractOrg(request);
+		if (this.domainRepository.existsByIdAndOrg(id, org)) {
+			domainRepository.deleteById(id);
+		};
 	}
 
-	private boolean validateIntegrity(HttpServletRequest request, Domain domain) throws OrganisationNotFoundException {
-		Long orgId = (Long) request.getAttribute("tenantId");
-		Optional<Organisation> opt = this.orgRepository.findById(orgId);
-		if (opt.isPresent()) {
-			return domain.isPartOf(opt.get());
-		}
-		throw new OrganisationNotFoundException("Organisation id: " + orgId);
-	}
-
-	private Organisation createOrg(HttpServletRequest request) {
-		Long orgId = (Long) request.getAttribute("tenantId");
-		return new Organisation(orgId);
+	private Organisation extractOrg(HttpServletRequest request) {
+		Organisation org = (Organisation) request.getAttribute("org");
+		return org;
 	}
 
 }
