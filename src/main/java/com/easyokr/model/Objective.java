@@ -50,4 +50,8 @@ public class Objective {
 		this.id = id;		
 	}	
 	
+	public boolean isPartOf(Organisation organisation) {		
+		return organisation.equals(this.org);
+	};
+	
 }

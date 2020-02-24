@@ -2,6 +2,8 @@ package com.easyokr.controller;
 
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.easyokr.exception.ObjectiveNotFoundException;
+import com.easyokr.interceptor.Utils;
+import com.easyokr.model.Domain;
 import com.easyokr.model.Objective;
+import com.easyokr.model.Organisation;
 import com.easyokr.repository.ObjectiveRepository;
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -33,41 +38,50 @@ public class ObjectivesController {
 	private ObjectiveRepository objectiveRepository;
 
 	@PostMapping
-	public Objective create(@RequestBody Objective objective) {
-		objectiveRepository.save(objective);
+	public Objective create(HttpServletRequest request, @RequestBody Objective objective) {
+		Organisation org = Utils.getOrg(request);
+		if (objective.isPartOf(org)) {
+			this.objectiveRepository.save(objective);
+		}
 		return objective;
 	}
 
 	@GetMapping()
-	public Iterable<Objective> readByDomainId(@RequestParam(value = "domainId", defaultValue = "") Long domainId) {
+	public Iterable<Objective> readByDomainId(HttpServletRequest request, @RequestParam(value = "domainId", defaultValue = "") Long domainId) {
+		Organisation org = Utils.getOrg(request);
 		Iterable<Objective> objectives;
 		if (domainId == null) {
-			objectives = this.objectiveRepository.findAll(Sort.by("description").ascending());
+			objectives = this.objectiveRepository.findByOrg(org, Sort.by("description").ascending());
 		} else {
-			objectives = this.objectiveRepository.findByDomainId(domainId);
+			Domain domain = new Domain(domainId);
+			objectives = this.objectiveRepository.findByDomainAndOrg(domain, org);
 		}
 		return objectives;
 	}
 
 	@GetMapping("/{id}")
-	public Objective read(@PathVariable long id) throws ObjectiveNotFoundException {
-		Optional<Objective> opt = this.objectiveRepository.findById(id);
-		if (opt.isPresent())
+	public Objective read(HttpServletRequest request, @PathVariable long id) {
+		Organisation org = Utils.getOrg(request);
+		Optional<Objective> opt = this.objectiveRepository.findByIdAndOrg(id, org);
+		if (opt.isPresent()) {
 			return opt.get();
-		throw new ObjectiveNotFoundException("Objective id: " + id);
+		};
+		return null;
 	}
 
 	@PutMapping("/{id}")
-	public Objective update(@PathVariable long id, @RequestBody Objective objective) throws ObjectiveNotFoundException {
-		if (!this.objectiveRepository.existsById(id))
-			throw new ObjectiveNotFoundException("Objective id: " + id);
-		objective.setId(id);
-		objectiveRepository.save(objective);
+	public Objective update(HttpServletRequest request, @PathVariable long id, @RequestBody Objective objective) {
+		Organisation org = Utils.getOrg(request);
+		if (this.objectiveRepository.existsByIdAndOrg(id, org)) {
+			objective.setId(id);
+			this.objectiveRepository.save(objective);
+		};			
 		return objective;
 	}
 	
 	@DeleteMapping("/{id}")
-	public void delete(@PathVariable long id) {
-		objectiveRepository.deleteById(id);		
+	public void delete(HttpServletRequest request, @PathVariable long id) {
+		Organisation org = Utils.getOrg(request);
+		this.objectiveRepository.deleteByIdAndOrg(id, org);
 	}
 }

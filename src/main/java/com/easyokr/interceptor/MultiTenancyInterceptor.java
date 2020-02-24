@@ -5,8 +5,6 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -30,7 +28,7 @@ public class MultiTenancyInterceptor extends HandlerInterceptorAdapter {
 		Long orgId = (Long)jat.getToken().getClaim("https://easy-okr.web.app/organisation");
 		Optional<Organisation> opt = orgRepository.findById(orgId);
 		if (opt.isPresent()) {
-			request.setAttribute("org", opt.get());
+			Utils.setOrg(request, opt.get());
 			return true;
 		}
 	    return false;

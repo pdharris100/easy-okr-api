@@ -26,6 +26,10 @@ public class Domain {
 //	private List<Objective> objectives;
 	
 	protected Domain () {}
+	
+	public Domain (long id) {
+		this.id = id;
+	}
 
 	public void setId(long id) {
 		this.id = id;		
