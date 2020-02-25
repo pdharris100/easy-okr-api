@@ -39,5 +39,9 @@ public class KeyResult {
 
 	public void setObjective(Objective objective) {
 		this.objective = objective;		
+	}
+
+	public boolean isPartOf(Organisation organisation) {		
+		return organisation.equals(this.org);
 	};
 }

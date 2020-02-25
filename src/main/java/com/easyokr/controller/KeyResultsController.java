@@ -2,6 +2,8 @@ package com.easyokr.controller;
 
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.easyokr.exception.KeyResultNotFoundException;
+import com.easyokr.interceptor.Utils;
 import com.easyokr.model.KeyResult;
+import com.easyokr.model.Organisation;
 import com.easyokr.repository.KeyResultRepository;
 
 @RestController
@@ -30,34 +34,42 @@ public class KeyResultsController {
 	private KeyResultRepository keyResultRepository;
 
 	@PostMapping
-	public KeyResult create(@RequestBody KeyResult keyResult) {
-		keyResultRepository.save(keyResult);
+	public KeyResult create(HttpServletRequest request, @RequestBody KeyResult keyResult) {
+		Organisation org = Utils.getOrg(request);
+		if (keyResult.isPartOf(org)) {
+			this.keyResultRepository.save(keyResult);
+		};
 		return keyResult;		
 	}
 	
 	@GetMapping()
-	public Iterable <KeyResult> read() {
-		Iterable <KeyResult> keyResults = this.keyResultRepository.findAll(Sort.by("description").ascending());
+	public Iterable <KeyResult> read(HttpServletRequest request) {
+		Organisation org = Utils.getOrg(request);
+		Iterable <KeyResult> keyResults = this.keyResultRepository.findByOrg(org, Sort.by("description").ascending());
 		return keyResults;
 	}
 	
 	@GetMapping("/{id}")
-	public KeyResult read(@PathVariable long id) throws KeyResultNotFoundException {
-		Optional <KeyResult> opt = this.keyResultRepository.findById(id);
+	public KeyResult read(HttpServletRequest request, @PathVariable long id) {
+		Organisation org = Utils.getOrg(request);
+		Optional <KeyResult> opt = this.keyResultRepository.findByIdAndOrg(id, org);
 		if (opt.isPresent()) return opt.get();
-		throw new KeyResultNotFoundException("KeyResult id: " + id);
+		return null;
 	}
 	
 	@PutMapping("/{id}")
-	public KeyResult update(@PathVariable long id, @RequestBody KeyResult keyResult) throws KeyResultNotFoundException {
-		if (!this.keyResultRepository.existsById(id)) throw new KeyResultNotFoundException("KeyResult id: " + id);
-		keyResult.setId(id);
-		keyResultRepository.save(keyResult);
+	public KeyResult update(HttpServletRequest request, @PathVariable long id, @RequestBody KeyResult keyResult) throws KeyResultNotFoundException {
+		Organisation org = Utils.getOrg(request);
+		if (this.keyResultRepository.existsByIdAndOrg(id, org)) {
+			keyResult.setId(id);
+			this.keyResultRepository.save(keyResult);
+		};			
 		return keyResult;
 	}
 	
 	@DeleteMapping("/{id}")
-	public void delete(@PathVariable long id) {
-		keyResultRepository.deleteById(id);		
+	public void delete(HttpServletRequest request, @PathVariable long id) {
+		Organisation org = Utils.getOrg(request);
+		this.keyResultRepository.deleteByIdAndOrg(id, org);		
 	}
 }
