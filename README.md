@@ -1,4 +1,4 @@
-git# Easy OKR API
+# Easy OKR API
 
 Easy OKR API is a Java-based RESTful service for managing Objectives and Key Results (OKRs) within organizations. It provides endpoints for handling domains, objectives, key results, teams, and organizations, supporting multi-tenancy and secure access.
 
